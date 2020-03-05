@@ -3,9 +3,6 @@
 
 ---
 
-<hr>
-<h2 id="layout-posttitle-youre-up-and-running">layout: post<br>
-title: You’re up and running!</h2>
 <h1 id="backtracking-and-variants">Backtracking and variants</h1>
 <p><img src="https://cdn-images-1.medium.com/fit/t/1600/480/0*bo2IpxNTU1Wrx6zv.jpg" alt="Just some random tree"></p>
 <p><em>Backtracking</em> is a fundamental approach to design algorithms.  If you want to solve a combinatorial optimization problem that is NP-Hard, your first approach should probably always be backtracking for an exact solution, and greedy for a quick one. A modification to the backtracking solution may lead to a <em>dynamic programming</em> approach, a <em>heuristic algorithm</em>,  an <em>approximation algorithm</em>.</p>

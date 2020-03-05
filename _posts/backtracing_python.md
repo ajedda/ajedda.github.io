@@ -1,9 +1,9 @@
 ﻿---
+layout: post
 title: Backtracking and Variants
 abstract: 'This is a shot abstract. '
 categories: algorithms
 keywords: algorithms
-layout: post
 postDate: 2020-03-05T01:01:45.0503792-05:00
 ---
 # Backtracking and variants 

@@ -1,10 +1,8 @@
 ﻿---
 layout: post
 title: Backtracking and Variants
-abstract: 'This is a shot abstract. '
 categories: algorithms
 keywords: algorithms
-postDate: 2020-03-05T01:01:45.0503792-05:00
 ---
 # Backtracking and variants 
 
@@ -19,28 +17,28 @@ This blog post is about Backtracking. We will go through a few examples  (with c
 
 ```python 
 def all_n_binary(n):
-	def _all_n_binary(lst):
-		# Our helper is an inner function to hide it. 
-		if  len(lst) == n:
-			print(lst)
-			return
+  def _all_n_binary(lst):
+    # Our helper is an inner function to hide it. 
+    if  len(lst) == n:
+      print(lst)
+      return
 
-		for x in [0,1]:
-			_all_n_binary(lst + [x])
-	_all_n_binary([])
+    for x in [0,1]:
+      _all_n_binary(lst + [x])
+  _all_n_binary([])
 all_n_binary(4) 
 ```   
 
 Now instead of all n-binary numbers, what about all n-decimal numbers. What about using any other base? All you have to do, besides using more meaningful names, is to change the for-loop: 
 ```python
-		for x in [0,1]:
-			_all_n_binary(lst + [x])
+for x in [0,1]:
+  _all_n_binary(lst + [x])
 ```
 To: 
 ```python
-		b = 10
-		for x in range(0, b): 
-			_all_n_decimal(lst + [x])
+b = 10
+for x in range(0, b): 
+  _all_n_decimal(lst + [x])
 ```
 
 and if you want to hexadecimal. You should use [0, 1, $\dots$, 9, A, B, C, D, E, F] instead of range(0, 10). 
@@ -48,16 +46,16 @@ and if you want to hexadecimal. You should use [0, 1, $\dots$, 9, A, B, C, D, E,
 **Another example:** a similar problem is to enumerate all k-sized subsets of the n-sized set $S$. For example, if $S = \{1,2,3\}$ and $k=2$. We want to output:     $\{1,2\}, \{1,3\},$ and $\{2,3\}$.  The following code can be used to solve this problem.  
 ```python 
 def all_k_subsets(n, k):
-	def _all_k_subsets(lst):
-		if  len(lst) == k: print(lst)
-		# The base-case (but what about using k instead of n?)  
-		if  len(lst) == n: 	return			
+  def _all_k_subsets(lst):
+    if  len(lst) == k: print(lst)
+    # The base-case (but what about using k instead of n?)  
+    if  len(lst) == n:  return      
 
-		for x in  range(1, n+1):
-			_all_k_subssets(lst + [x])
-	
-	print ("printing all subsets ({},{})".format(n, k))
-	return _all_k_subsets([])
+    for x in  range(1, n+1):
+      _all_k_subssets(lst + [x])
+  
+  print ("printing all subsets ({},{})".format(n, k))
+  return _all_k_subsets([])
 ```
 
 This function also has minor differences from the previous two functions; the base-case if-statement, and the range(1, n+1). 
@@ -70,13 +68,13 @@ A solution $\{x_1, \dots, x_{l-1}\}$ can be extended with any of the elements in
 
 **The general algorithm:** Based on all of that, here is a general backtracking algorithm: 
 ```python 
-def backtrack():	
-	def _backtrack(lst):
-		if is_solution(lst): process(lst)	
-		if base_case(lst): return
-		for x in choices(lst):
-			_backtrack(lst + [x])
-		return _backtrack([])
+def backtrack():  
+  def _backtrack(lst):
+    if is_solution(lst): process(lst) 
+    if base_case(lst): return
+    for x in choices(lst):
+      _backtrack(lst + [x])
+    return _backtrack([])
 ``` 
 
 **Why do we use backtracking?** we use backtracking to solve three types of problems: 
@@ -104,15 +102,15 @@ There are some really smart pruning tricks out there that are based on complex m
 
 ```python 
 def all_ord_n_sets(k, n):
-	def _all_ord_n_sets(lst): 
-		if  len(lst) == k: 
-			print(lst)
-			return
-		# example of pruning with the set choices. 	
-		b = max(lst)+1  if lst else  0
-		for x in  range(b, n):
-			_all_ord_n_sets(lst + [x])
-	_all_ord_n_sets([])
+  def _all_ord_n_sets(lst): 
+    if  len(lst) == k: 
+      print(lst)
+      return
+    # example of pruning with the set choices.  
+    b = max(lst)+1  if lst else  0
+    for x in  range(b, n):
+      _all_ord_n_sets(lst + [x])
+  _all_ord_n_sets([])
 ``` 
 
 **Optimization problems:** From now on, we will focus on optimization problems only.  That is, we want to find the solution with the maximum score or minimum cost. The problem is nothing but a _search_. Given a set of numbers, find the minimum number in it. Unfortunately, solving this deterministically in the general case requires $\Omega(n)$ steps. If $S$ is huge, as it is the case in our backtracking problems, then we may spend years running our algorithm. 
@@ -125,9 +123,9 @@ Let's say we are looking for the element with the maximum score. The maximum sco
 
 > In the Max-Clique problem $S$ must be a clique too, otherwise no solution will be obtained from extending $S$.  This means that any subset of $S$ is also a clique. 
 
-Also note that any extension of $S$ in the MaxClique must also be a clique.  That is, the maximum clique that  I will be able to obtain if I followed this path is less or equal to $|S|$ + $|\mathbf{C}(S)|$.  This is an _upper bound_.  In other words, you can simply prune this sub-tree if $s_m \ge |S|$ + $|\mathbf{C}(S)|$.
+Also note that any extension of $S$ in the MaxClique must also be a clique.  That is, the maximum clique that  I will be able to obtain if I followed this path is less or equal to $\lvert S \rvert$ + $\lvert\mathbf{C}(S)\rvert$.  This is an _upper bound_.  In other words, you can simply prune this sub-tree if $s_m \ge \lvert S \rvert$ + $\lvert \mathbf{C}(S) \rvert$.
 
-**Another example of bounding** in the MaxClique problem is based on _coloring_.  Note that if a graph can be colored with $\chi$ colors, then its maximum clique size is less or equal to $\chi$. Why? If there is a clique of size $k$, then each node will have a different color. Therefore, $\chi$ is at least $k$.  This is an upper bound!  How to use it? Take the graph induced  from the set  $|\mathbf{C}(S)|$. Color it using any known coloring algorithm. Let the number of colors obtained plus the size of your solution be your upper bound.  
+**Another example of bounding** in the MaxClique problem is based on _coloring_.  Note that if a graph can be colored with $\chi$ colors, then its maximum clique size is less or equal to $\chi$. Why? If there is a clique of size $k$, then each node will have a different color. Therefore, $\chi$ is at least $k$.  This is an upper bound!  How to use it? Take the graph induced  from the set  $\lvert\mathbf{C}(S)\rvert$. Color it using any known coloring algorithm. Let the number of colors obtained plus the size of your solution be your upper bound.  
 
 **Bounding Bonus Note 1:** Did you note that each subtree has a different bound? Which bound would you prefer? I answer here. The smallest upper bound.  So, should we traverse our tree in a Depth-First traversal?  We traverse the search tree in depth-first because we are using the _function calls stack_. We can use a stack of our design if you want and we would get the same results.  If we use a _queue_, we would traverse the tree in _breadth-first traversal_. We can use other forms of traversals if we use a min-queue using different ordering heuristics.  Smart tree traversal heuristics can have a great impact on the time of finding the solution.
 

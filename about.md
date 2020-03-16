@@ -4,12 +4,6 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+These are really nothing but random (technical) ideas that I felt were cool at some point in my life. My main interests are Algorithms, Programming, and Machine Learning. The languages I am generally using are C++ and Python. Things may change in the future.  
 
-### More Information
 
-A place to include any other types of information that you'd like to include about yourself.
-
-### Contact me
-
-[email@domain.com](mailto:email@domain.com)

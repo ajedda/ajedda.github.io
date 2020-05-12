@@ -24,6 +24,35 @@ namespace ver1
       
       
       // Step 1: Set r[0] to f[0]. 
+      *out++ = *first;
+      
+      // Step 2: r[i] = f[i] - f[i-1]
+      for (  ; ;  ) 
+      {
+        auto prev_f = *first++; 
+        if (first == last) { return out; }
+        *out++ = *first - prev_f; 
+      }
+      return out; 
+    } 
+}
+```
+
+
+The code above sets the $r_0$ to $x_0$ (see Step 1), then set $r_i$ to $x_{i} - x_{i-1}$.  I don't like Step 1, and this is why I am removing in the following version: 
+
+```cpp
+namespace ver1
+{
+    template <typename InpIterator, typename OutIterator>
+    OutIterator adjacent_difference(InpIterator first, InpIterator last, OutIterator out) 
+    {
+      // Rule of thumb: always check the input 
+      // ranges if they are equal. 
+      if (first == last) { return out; } 
+      
+      
+      // Step 1: Set r[0] to f[0]. 
       // I am commenting this out, but std::adjacent_difference 
       // does not. 
       // *out++ = *first;
@@ -41,7 +70,8 @@ namespace ver1
 ```
 
 
-The code above sets the $r_0$ to $x_0$ (see Step 1), then set $r_i$ to $x_{i} - x_{i-1}$.  I don't like Step 1, and this is why I commented out. I suggest we call the function as follows: 
+
+I suggest we call the function as follows: 
 
 ```cpp
 std::vector<int> v{3,5,2,7,3,4,5,4};
@@ -87,7 +117,10 @@ namespace ver1
     } 
 }
 ```
-The worst part of that version above is that the user will always need to provide an output iterator even if it is not needed.  I'd rather combine the binary operator and output iterator together. This is not very STL-like programming (perhaps it is time to standardize a function output iterator). The last adjacent_pairs version I am suggesting is: 
+
+We can do magic with operator op. For example, it may be a function that combines $x_i$ and $x_{i-1}$ (e.g., creates a new string from these two fields, and other more meaningful applications). The worst part of that version above is that the user will always need to provide an output iterator even if it is not needed (e.g., op returns void).  I'd rather combine the binary operator and output iterator together. This is not very STL-like programming (perhaps it is time to standardize a function output iterator). 
+
+The last adjacent_pairs version I am suggesting is: 
 
 ```cpp
 namespace ver2

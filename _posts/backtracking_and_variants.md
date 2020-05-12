@@ -3,6 +3,7 @@ layout: post
 title: Backtracking and Variants
 categories: algorithms
 keywords: algorithms
+published: false
 ---
 # Backtracking and variants 
 

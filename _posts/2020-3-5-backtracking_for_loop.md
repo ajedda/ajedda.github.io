@@ -3,6 +3,7 @@ layout: post
 title: Implementing Backtracking with a Stack
 categories: algorithms
 keywords: algorithms
+published: false
 ---
 
 ```python

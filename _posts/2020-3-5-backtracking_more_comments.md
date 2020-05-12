@@ -3,6 +3,7 @@ layout: post
 title: Some notes about Backtracking
 categories: algorithms
 keywords: algorithms
+published: false
 ---
 # Backtracking: Some Notes
 

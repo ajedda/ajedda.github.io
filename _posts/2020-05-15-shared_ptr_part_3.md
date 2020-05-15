@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 3: more organization"
+title: "Shared Pointers - Part 3: More Decoupling"
 categories: C++
 keywords: programming; C++
 ---
@@ -8,7 +8,7 @@ keywords: programming; C++
 
 My objective in this post is to do some more organization of the code. There were some details in the shared_ptr class implementation (e.g., the copy constructor, assignment operator, and destructor) that should be moved to the reference counter class.  For example, the shared pointer in the previous version directly called the reference counter release and acquire. These two functions should be private to the reference counter. 
 
-How can we hide these details? It is not trivial because the reference counter is shared (i.e., created in the heap). The GCC implementation hides these details in a proxy class. We will call this the shared_ptr_counter class.  With the introduction of this class, the shared_ptr class will delegate all reference counting to the new shared_ptr_counter class. It is a nice pattern in my opinion that is worth sharing.  What is the name of this technique/pattern? I am not really sure. However, the STL library in gcc uses different techniques/patterns to hide implementation details. One of them is inheriting from an implementation class (e.g., shared_ptr inherits from __shared_ptr). 
+How can we hide these details? It is not trivial because the reference counter is shared (i.e., created in the heap). The GCC implementation hides these details in a proxy class. We will call this the shared_ptr_counter class.  With the introduction of this class, the shared_ptr class will delegate all reference counting to the new shared_ptr_counter class. It is a nice pattern in my opinion that is worth sharing.  What is the name of this technique/pattern? I am not really sure. It is probably one of the *Handle Body* idioms. The STL library in gcc uses different techniques/patterns to hide implementation details. One of them is inheriting from an implementation class (e.g., shared_ptr inherits from __shared_ptr). 
 
 
 Let's see how all this work. The implementation of ref_counter_ptr_t will remain unchanged. 

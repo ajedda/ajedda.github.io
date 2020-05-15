@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 2: will you ever delete this?"
+title: "Shared Pointers - Part 2: Will you ever delete this?"
 categories: C++
 keywords: programming; C++
 ---

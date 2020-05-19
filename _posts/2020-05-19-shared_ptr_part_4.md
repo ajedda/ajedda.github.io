@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 4: Custom Deleter"
+title: "Shared Pointers - Part 4: Custom Deleters"
 categories: C++
 keywords: programming; C++
 ---

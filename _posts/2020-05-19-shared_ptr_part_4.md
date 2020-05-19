@@ -94,12 +94,11 @@ Contrary to ```ref_counter_ptr_default```,  class ```ref_counter_ptr_deleter``` 
 But where  is Deleter in the shared_pointer? It is in one of the constructors, a template construtor actually.  That is, we should have a shared_pointer constructor as follows: 
 
 ```cpp
-    template <typename Deleter> 
-    shared_ptr(T* ptr, Deleter d)
-      : _shared_ptr_ctr{ptr, d} 
-      , _ptr{ptr} 
-    {} 
-};
+template <typename Deleter> 
+shared_ptr(T* ptr, Deleter d)
+  : _shared_ptr_ctr{ptr, d} 
+  , _ptr{ptr} 
+{} 
 ```
 
 

@@ -8,10 +8,9 @@ keywords: programming; C++
 
 My objective in this post is to do some more organization of the code. There were some details in the shared_ptr class implementation (e.g., the copy constructor, assignment operator, and destructor) that should be moved to the reference counter class.  For example, the shared pointer in the previous version directly called the reference counter release and acquire. These two functions should be private to the reference counter. 
 
-How can we hide these details? It is not trivial because the reference counter is shared (i.e., created in the heap). The GCC implementation hides these details in a proxy class. We will call this the shared_ptr_counter class.  With the introduction of this class, the shared_ptr class will delegate all reference counting to the new shared_ptr_counter class. It is a nice pattern in my opinion that is worth sharing.  What is the name of this technique/pattern? I am not really sure. It is probably one of the *Handle Body* idioms. The STL library in gcc uses different techniques/patterns to hide implementation details. One of them is inheriting from an implementation class (e.g., shared_ptr inherits from __shared_ptr). 
+How can we hide these details? It is not trivial because the reference counter is shared (i.e., created in the heap). The GCC implementation hides these details in a proxy class. We will call this the ``shared_ptr_counter`` class.  With the introduction of this class, the ``shared_ptr`` class will delegate all reference counting to the new ``shared_ptr_counter`` class. It is a nice pattern in my opinion that is worth sharing.  I am not sure if this pattern (as introduced in this post) has a name. It can be classified under one of the *Handle Body* idioms. As we build on top of that in the next posts, I will show that it actually serves for erasing the reference counter type as well. 
 
-
-Let's see how all this work. The implementation of ref_counter_ptr_t will remain unchanged. 
+Let's see how all this work. The implementation of ``ref_counter_ptr_t`` will remain unchanged. 
 
 ```cpp
 namespace ver3
@@ -54,7 +53,7 @@ void ref_counter_ptr_t<T>::release()
 }
 ```
 
-Our proxy class is called shared_ptr_counter. Our objective it to convert shared_ptr implementation to as follow: 
+Our proxy class is called ``shared_ptr_counter``. Our objective it to convert ``shared_ptr`` implementation to as follow: 
 
 ```cpp
 template <class T> 
@@ -73,7 +72,7 @@ struct shared_ptr
 
 In other words, I am only using the default class constructors and operators.  
 
-Class shared_ptr constructors/assignment operators will implements the behaviour of the construcotrs/assignment operators of the previous shared_ptr version. This goes as follows: 
+Class ``shared_ptr`` constructors/assignment operators will implements the behaviour of the construcotrs/assignment operators of the previous ``shared_ptr`` version. This goes as follows: 
 
 ```cpp
 template <class T> 
@@ -133,6 +132,6 @@ shared_ptr_counter<T>::~shared_ptr_counter()
 }  
 ```
 
-Let's get back to the acquire and release. These should be private in ref_counter_ptr_t. They are not in this version. However, shared_ptr_counter accesses them. That can be done using a friend relationship. This friend relationship between shared_ptr_counter and ref_counter_ptr_t makes more sense (compared to the friend relationship we had between shared_ptr and ref_counter_ptr_t). This is because both ref_counter_ptr_t and shared_ptr_counter does the same thing after all (that is, reference counting, instead of sharing pointers.) 
+Let's get back to the acquire and release. These should be private in ``ref_counter_ptr_t``. They are not in this version. However, ``shared_ptr_counter`` accesses them. That can be done using a friend relationship. This friend relationship between ``shared_ptr_counter`` and ``ref_counter_ptr_t`` makes more sense (compared to the friend relationship we had between ``shared_ptr`` and ``ref_counter_ptr_t``). This is because both ``ref_counter_ptr_t`` and ``shared_ptr_counter`` does the same thing after all (that is, reference counting, instead of sharing pointers.) 
 
 ... and this is it for now. 

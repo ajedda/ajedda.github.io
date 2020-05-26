@@ -100,7 +100,7 @@ class unique_ptr
 
 The size of the second class must be greater than sizeof(T*), even if ``Deleter<T>`` has no member variables. In the first case, the class size can be equal to sizeof(T*) if ``Deleter<T>`` has no member variables. This is called empty member optimization. C++20 introduces a way to define ``Deleter<T>`` as a member variable while keeping the benefits of empty base optimization.  
 
-**An application:** I found this benificial while dealing once with a *stream factory*. The objective is to design a factory function that returns either an file ostream, or the standard output stream ``std::cout``.   Both streams are of the same base type ``std::ostream``. One way to do this is to wrap the returned stream inside a shared_ptr. For example: 
+**An application:** I found this beneficial while dealing once with a *stream factory*. The objective is to design a factory function that returns either an file ostream, or the standard output stream ``std::cout``.   Both streams are of the same base type ``std::ostream``. One way to do this is to wrap the returned stream inside a shared_ptr. For example: 
 
 ```cpp
 auto stream_factory = [](bool use_cout) -> std::shared_ptr<std::ostream>

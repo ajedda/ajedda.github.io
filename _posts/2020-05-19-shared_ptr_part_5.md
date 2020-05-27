@@ -12,7 +12,7 @@ If you remember from the previous post, adding a custom deleter to the shared po
 
 ```cpp
 auto sp = std::shared_ptr<int>{new int, [](auto* ptr) {delete ptr; }}; 
-    static_assert(std::is_same_v<std::shared_ptr<int>, decltype(sp)>); 
+static_assert(std::is_same_v<std::shared_ptr<int>, decltype(sp)>); 
 ```
 
 This is not the case in ``std::unique_ptr``. The type of the deleter is part of ``std::unique_ptr`` class definition. This means that two unique pointers with different deleters do not have the same type, even if the underlying pointer type is the same.  Let me give you some examples of how to give ``std::unique_ptr`` custom deleters. 
@@ -119,9 +119,8 @@ auto stream_factory = [](bool use_cout) -> std::shared_ptr<std::ostream>
 ```
 That, in the way I wrote it, will not work with unique_ptr. As an exercise, try to find a different way to do this.  
 
-There is, of course, a different way to do this without custom deleters. I have to admit as well that you can do it (in the case of ``std::ostreams``) with unique pointers only. **However**, keep in mind that you may end up one day with this scenario. Just note that std::cout is a *global variable*, whereas the file stream is *dynamically allocated* by the factory (and both returned by the factory). 
+ I have to admit as well that you can do it (in the case of ``std::ostreams``) with unique pointers only. The solution is provided in the code below.  **However**, keep in mind that you may still end up with the scenario above. 
 
-So how to solve the stream factory with unique pointers? Here is the code. 
 ```cpp
 auto stream_factory = [](bool use_cout) -> std::unique_ptr<std::ostream>
 {     

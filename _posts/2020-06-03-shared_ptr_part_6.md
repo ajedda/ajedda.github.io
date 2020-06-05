@@ -5,9 +5,9 @@ categories: C++
 keywords: programming; C++
 ---
 
-Everything we have seen so far about my implementation of ``std::shared_ptr`` is single-threaded. My focus was (and is still) on the software design techniques used by gcc to implement this library.  My objective in the next posts is to introduce a multi-threaded implementation of ``std::shared_ptr``. *I will not use all the techniques that STL used*. They use techniques that an average programmer will probably never use. However, I am picking a few techniques to explain. 
+Everything we have seen so far about this tutorial's implementation of ``std::shared_ptr`` is single-threaded. My focus was (and still is) on the software design techniques used by gcc to implement this library.  My objective in the next posts is to introduce a multi-threaded implementation of ``std::shared_ptr``. Please note that I will not use all the techniques that STL used. They use tools that an average programmer (and many above average programmers) will probably never use. 
 
-First, there are few methods we can use to implement a multi-threaded ``std::shared_ptr``, according to the *lock policy*. For example, we can use an *atomic reference counter*. We can use *mutexes*. Or, we can simply assume that our environment is always single-threaded, and hence we just continue using the single-threaded design. Therefore, we need to specialize our implementation according to the lock policy used.  Let's introduce an enum class for the ``LockPolicy``. 
+First, there are few methods we can use to implement a multi-threaded ``std::shared_ptr``. That will depend on the *lock policy* that we are using. For example, we can use an *atomic reference counter*, *mutexes*, or simply assume that our environment is always single-threaded (and hence we just continue using the single-threaded design). We need to specialize our implementation according to the lock policy used.  Let's introduce an enum class for the ``LockPolicy``. 
 
 ```cpp
 enum class LockPolicy
@@ -18,7 +18,7 @@ enum class LockPolicy
 }; 
 ```
 
-This *LockPolicy* can be an additional template variable to our shared pointer class.  The signature of ``std::shared_ptr`` can end up such as: 
+This *LockPolicy* can be an additional template variable to our shared pointer class.  The signature of ``std::shared_ptr`` may end up such as: 
 
 ```cpp
 template <typename T, LockPolicy P=default_lock_policy()>
@@ -37,7 +37,7 @@ class shared_ptr : __shared_ptr<T, default_lock_policy()>
 } 
 ```
 
-You can use ``__shared_ptr`` and specify your own locking policy if you want. For example: 
+A side note: you can use ``__shared_ptr`` and specify your own locking policy if you want. This code will not be portable though.  
 
 ```cpp
 #include <bits/shared_ptr_base.h> 
@@ -47,7 +47,7 @@ std::__shared_ptr<int, std::_Lock_policy::_S_single> _sp_in_single;
 ```
 
 
-Anyway, the only two functions that we would like to specialize are ``acquire`` and ``release`` - which are in ``ref_counter_ptr_base``.   This will force us to include the ``LockPolicy`` in pretty much every class we wrote.  In other words, the classes we have will have the following signatures: 
+Anyway, the only two functions that we would like to specialize are ``acquire`` and ``release``, which are in ``ref_counter_ptr_base``.   This will force us to include the ``LockPolicy`` template variable in pretty much every class we wrote.  Our classes will have the following signatures: 
 
 ```cpp
 template <class T, LockPolicy P> 
@@ -74,9 +74,10 @@ struct ref_counter_ptr_base
 }; 
 ```
 
-*How to specialize ``acquire`` and ``release`` according to the LockPolicy used?* I can think of at least three ways to do that. Let's start with the **first method: converting a partial specialization to full specialization**: 
+**How to specialize ``acquire`` and ``release`` according to the LockPolicy used?** I can think of at least three ways to do that. Let's start with the **first method: converting a partial specialization to full specialization**: 
 
 I would like to write something like: 
+
 ```cpp
 template <typename T> 
 void ref_counter_ptr_base<T, LockPolicy::single>::acquire() 
@@ -92,8 +93,7 @@ void ref_counter_ptr_base<T, LockPolicy::atomic>::acquire()
 This will *not* work. You *cannot* partially specialize a function. To avoid *partial template specialization*, we can make ``ref_counter_ptr_base`` be a template of the LockPolicy only. This means, ``ref_counter_ptr_base`` will no more hold a member variable of type ``T*``. The children of ``ref_counter_ptr_base`` will do instead.  This leads to a refactoring of ``ref_counter_ptr_base`` and its children as follows: 
 
 ```cpp
-
-template <LockPolicy P> 
+template <LockPolicy P>  
 struct ref_counter_ptr_base
 {
    uint32_t _ref_cntr; // the only member variable here. 
@@ -121,7 +121,9 @@ struct ref_counter_ptr_deleter final : public ref_counter_ptr_base<P>
 } 
 ```
 
-That first method is pretty nice. This is what gcc is doing now. It is not easy to do. You may end up with a lot of refactoring if you end up doing it. Plus, it is very old-fashioned.  The **second method** use the C++17 feature **if constexpr**. It makes the code much easier. However, not everyone has the luxury of using C++17. With if-constexpr, we will keep the template ``ref_counter_ptr_base`` as a function of ``T`` and ``LockPolicy``. The implementation of ``acquire`` will like this: 
+That first method is pretty nice. This is what gcc is doing now. It is not easy to do. It may result in a lot of refactoring. 
+
+The **second method** use the C++17 feature **if constexpr**. It makes the code much easier. However, not everyone has the luxury of using C++17. With if-constexpr, we will keep the template ``ref_counter_ptr_base`` as a function of ``T`` and ``LockPolicy``. The implementation of ``acquire`` will look like this: 
 
 ```cpp
 template <typename T, LockPolicy> 
@@ -139,9 +141,9 @@ void ref_counter_ptr_base<T, P>::acquire()
 } 
 ```
 
-It may look more modern and cooler, but it has some main issues; the acquire_* functions should be static. Therefore, we should call them with references to all the variables that may be used. For example, ``acquire_single`` may be called with ``acquire_single(_ref_cntr, _ptr)``, etc ... . 
+It may look more modern and cooler, but it has some main issues. The ``acquire_*`` functions will have to be static in some scenarios (e.g., when different specialization use different member variables. We will see a case of that in this tutorial). Therefore, we should call them with references to all the variables that may be used. For example, ``acquire_single`` may be called with ``acquire_single(_ref_cntr, _ptr)``, etc ... . 
 
-Note, you may simply call the acquire_* functions as ```acquire(P, .... )`` in some scenarios where calling a temporary variable of type ``P`` is cheap and possible (e.g., default constructible).  
+
 
 The **third method** is to **invoke a fully specialized callable class instead of a function**. Here is an example of how to do this: 
 
@@ -184,8 +186,8 @@ void private_acquire<LockPolicy::mutex>::acquire(T v) { std::cout << "mutex priv
 ``` 
  
 
-This shares the same cons of the if-constexpr method plus the extra verbosity.  It also has a bad limitation. All of the private acquire functions receive the same set of input variables. This is not good at all. Many cons for this third method. However, you may end up using it in other scenarios. 
+This shares the same cons of the if-constexpr method plus the extra verbosity.  It also has a bad limitation. All of the private acquire functions receive the same set of input variables. 
 
-Believe it or not, I like the **first method** for this shared pointer we are designing here. The main reason is that I don't like continuously passing the member variables to my specialized functions (e.g., ``acquire_single(_ref_cntr, _ptr)``). 
+I like the **first method** for this shared pointer we are designing here. The main reason is that I don't like continuously passing the member variables to my specialized functions (e.g., ``acquire_single(_ref_cntr, _ptr)``). 
 
 This is it for this post. There are more in the next post. 

@@ -5,7 +5,7 @@ categories: C++
 keywords: programming; C++
 ---
 
-Everything we have seen so far about this tutorial's implementation of ``std::shared_ptr`` is single-threaded. My focus was (and still is) on the software design techniques used by gcc to implement this library.  My objective in the next posts is to introduce a multi-threaded implementation of ``std::shared_ptr``. Please note that I will not use all the techniques that STL used. They use tools that an average programmer (and many above average programmers) will probably never use. 
+Everything we have seen so far about this tutorial's implementation of ``std::shared_ptr`` is single-threaded. My focus was (and still is) on the software design techniques used by gcc to implement this library.  My objective in the next posts is to introduce a multi-threaded implementation of ``std::shared_ptr``. 
 
 First, there are few methods we can use to implement a multi-threaded ``std::shared_ptr``. That will depend on the *lock policy* that we are using. For example, we can use an *atomic reference counter*, *mutexes*, or simply assume that our environment is always single-threaded (and hence we just continue using the single-threaded design). We need to specialize our implementation according to the lock policy used.  Let's introduce an enum class for the ``LockPolicy``. 
 
@@ -190,4 +190,4 @@ This shares the same cons of the if-constexpr method plus the extra verbosity.  
 
 I like the **first method** for this shared pointer we are designing here. The main reason is that I don't like continuously passing the member variables to my specialized functions (e.g., ``acquire_single(_ref_cntr, _ptr)``). 
 
-This is it for this post. There are more in the next post. 
+This is it for this post. The implementation details are in the next post. 

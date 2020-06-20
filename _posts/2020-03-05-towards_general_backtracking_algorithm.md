@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: A Framework for Backtracking Algorithms
+title: A framework for backtracking algorithms
 categories: algorithms
 keywords: algorithms
 comments: true

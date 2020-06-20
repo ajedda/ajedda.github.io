@@ -1,8 +1,9 @@
 ﻿---
 layout: post
-title: "A Type Erased Deleter for std::unique_ptr"
+title: "Type erased deleter for std::unique_ptr"
 categories: C++
 keywords: programming; C++
+published: true
 ---
 
 
@@ -93,12 +94,9 @@ namespace ver3
   {
     virtual void operator()(T* ptr) 
     { 
-        // This is the default behaviour. 
-        // In practice, we should take care of the case when ptr is 
-        // a dynamically allocated array. In other words, calling 
-        // delete may cause an issue. The solution is quite easy, 
-        // but we will discuss it in future posts. 
-        delete ptr; 
+        // We use std::default_delete in case of delete to 
+        // handle the case when T is array. 
+        std::default_delete<T>{}(ptr);
     }
     virtual ~DeleterBase() = default;
   }; 
@@ -223,3 +221,5 @@ One last thing to check is the size of the new pointer. It is not just a single 
    };
 ```
 
+
+Before I finish this post, note the similarities between the classes introduced in this post and the reference counting classes in the last shared pointer posts. Class ``DeleterBase`` is similar to ``ref_counter_ptr_base``. Class ``DeleterImpl`` is similar to ``ref_counter_ptr_deleter``. The default behaviour here is implemented in ``DeleterBase`` whereas it is implemented in ``ref_counter_ptr_default`` in  the shared pointer reference counter. We could have done the same, but we decided to keep ``ref_counter_ptr_base`` abstract. Note another difference as well which is how we are freeing the memory in both libraries. 

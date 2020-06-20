@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 6: Multi-threaded locking policies (specializing functionalities)"
+title: "Shared Pointers - Part 7: Multi-threaded locking policies (specializing functionalities)"
 categories: C++
 keywords: programming; C++
 ---

@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 5: Comparison with unique_ptr custom deleters"
+title: "Shared Pointers - Part 6: Comparison with unique_ptr custom deleters"
 categories: C++
 keywords: programming; C++
 ---

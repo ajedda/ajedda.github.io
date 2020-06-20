@@ -1,11 +1,11 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 4: Custom Deleters"
+title: "Shared Pointers - Part 4: Custom deleters"
 categories: C++
 keywords: programming; C++
 ---
 
-It is time for a new feature in our shared pointer; custom deleters. Let's say that your pointer was allocated with *malloc* (or any other custom allocator). It should, in this case, be deallocated using *free* (or the corresponding de-allocator).  Unfortunately, this shared pointer implementation will fail to do the job correctly.  The good news is that it is easy to fix. We should tell our shared pointer to use a special *deleter* function instead of using the default *delete*.  In other words, instead of ```delete _ptr``` in ```release()``` we should use ```dispose(_ptr)``` as shown in this example. 
+It is time for a new feature in our shared pointer; custom deleters. Let's say that your pointer was allocated with *malloc* (or any other custom allocator). It should, in this case, be deallocated using *free* (or the corresponding de-allocator).  Unfortunately, this shared pointer implementation will fail to do the job correctly.  The good news is that this problem is easy to fix. We should tell our shared pointer to use a special *deleter* function instead of using the default ``delete``.  One way to do that is to replace ```delete _ptr``` in ```release()``` with a  ```dispose(_ptr)``` as shown in this example. 
 
 ```cpp
 template <class T> 
@@ -19,26 +19,26 @@ void ref_counter_ptr_t<T>::release()
 }
 ```
 
-How to tell this shared pointer implementation to use dispose of if provided, or delete otherwise? what type is dispose? should dispose be a member variable? and how? That's what we will be answering next. 
+How to tell this shared pointer implementation to use a custom deleter if provided, or ``delete`` otherwise? what is the type of ``dispose``? should ``dispose`` be a member variable? and how? That's what we will be answering next. 
 
 Before we start, we should note that the shared pointer class definition will not change. That is, we will not add a new template variable to the class. It will remain: 
 
 ```cpp
 template <typename T>
-class shared_pointer; 
+class shared_ptr; 
 ```
 
 This forces us to go on the design path that I will discuss next. 
 
 
-The first thing we should note is that ```shared_ptr_counter<T>::_ref_cntr``` is a pointer of type  ```ref_counter_ptr_t```. This allows us to use a polymorphic reference counter. This reference counter implements ```dispose``` differently. Once as ```delete _ptr``` and another as ```free(_ptr)``` or ```d(_ptr)```. The type of free or d is a concept that will call Deleter.  Therefore, let's re-organize the ref_counter_ptr_t as discussed. We will create a base class, and two derived classes, each implementing dispose differently. 
+The first thing we should note is that ```shared_ptr_counter<T>::_ref_cntr``` is a pointer of type  ```ref_counter_ptr_t```. This allows us to use a polymorphic reference counter. This reference counter implements ```dispose``` differently. Let's re-organize the ``ref_counter_ptr_t`` as discussed. We will create a base class, and two derived classes, each implementing dispose differently. 
 
 ```cpp
 template <class T> 
 struct ref_counter_ptr_base
 { 
   
-  uint32_t _ref_cntr;    
+  uint64_t _ref_cntr;    
   T* _ptr;    
  
   ref_counter_ptr_base(T* ptr = nullptr); 
@@ -89,9 +89,9 @@ struct ref_counter_ptr_deleter final : public ref_counter_ptr_base<T>
 };
 ```
 
-Contrary to ```ref_counter_ptr_default```,  class ```ref_counter_ptr_deleter``` has a member variable of type Deleter, which can be function, a callable object, or lambda. Whatever Deleter is, it must be Copy Constructible. 
+Contrary to ```ref_counter_ptr_default```,  class ```ref_counter_ptr_deleter``` has a member variable of type ``Deleter``, which can be function, a callable object, or lambda. Whatever ``Deleter`` is, it must be Copy Constructible. 
 
-But where  is Deleter in the shared_pointer? It is in one of the constructors, a template construtor actually.  That is, we should have a shared_pointer constructor as follows: 
+But where  is ``Deleter`` in the ``shared_ptr``? It is in one of the constructors, a template construtor actually.  That is, we should have a shared_pointer constructor as follows: 
 
 ```cpp
 template <typename Deleter> 
@@ -161,4 +161,4 @@ Everything else is implemented as before. So, this is it. A pretty nice feature 
  1. Use polymorphism to implement different dispose behavior. 
  2. Use templatized constructors to control which implementation to use. 
 
-As you can see, this had minimum changes on the shared pointer class. All we had to do is to add one constructor.
+As you can see, this had minimum changes on the shared pointer class. 

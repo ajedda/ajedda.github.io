@@ -1,14 +1,14 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 3: More Decoupling"
+title: "Shared Pointers - Part 3: More decoupling"
 categories: C++
 keywords: programming; C++
 ---
 
 
-My objective in this post is to do some more organization of the code. There were some details in the shared_ptr class implementation (e.g., the copy constructor, assignment operator, and destructor) that should be moved to the reference counter class.  For example, the shared pointer in the previous version directly called the reference counter release and acquire. These two functions should be private to the reference counter. 
+We will do some more code re-organization in this post. There were some details in the shared_ptr class implementation (e.g., the copy constructor, assignment operator, and destructor) that should be moved to the reference counter class.  As an example, the shared pointer in the previous version directly called the reference counter release and acquire. These two functions should be private to the reference counter. 
 
-How can we hide these details? It is not trivial because the reference counter is shared (i.e., created in the heap). The GCC implementation hides these details in a proxy class. We will call this the ``shared_ptr_counter`` class.  With the introduction of this class, the ``shared_ptr`` class will delegate all reference counting to the new ``shared_ptr_counter`` class. It is a nice pattern in my opinion that is worth sharing.  I am not sure if this pattern (as introduced in this post) has a name. It can be classified under one of the *Handle Body* idioms. As we build on top of that in the next posts, I will show that it actually serves for erasing the reference counter type as well. 
+How can we hide these details? It is not trivial because the reference counter is shared (i.e., created in the heap). We can hide these details in a proxy class. We will call this the ``shared_ptr_counter`` class.  With the introduction of this class, the ``shared_ptr`` class will delegate all reference counting to the new ``shared_ptr_counter`` class. There will be no acquire, no release, and not even an allocation at class ``shared_ptr``.  Furthermore, the shared pointer class will not have a pointer to the reference counter as it was the case in the previous  two versions. I think this is a nice a pattern that is worth sharing. I am not sure if this pattern (as introduced in this post) has a name. It can be classified under one of the *Handle Body* idioms. As we build on top of that in the next posts, I will show that re-organizaiton will allow us to do some cool stuff, especially when it comes to custom deleters (but that will be in the next posts). 
 
 Let's see how all this work. The implementation of ``ref_counter_ptr_t`` will remain unchanged. 
 
@@ -29,26 +29,7 @@ struct ref_counter_ptr_t
  
 };
 
-template <class T>
-ref_counter_ptr_t<T>::ref_counter_ptr_t(T* ptr) 
-  : _ref_cntr(1), _ptr(ptr)
-{ }
- 
-template <class T> 
-void ref_counter_ptr_t<T>::acquire() 
-{ 
-  ++_ref_cntr;
-} 
 
-template <class T> 
-void ref_counter_ptr_t<T>::release()
-{
-  if (--_ref_cntr == 0) 
-  { 
-    delete _ptr; 
-    delete this;  
-  }  
-}
 
 }
 ```
@@ -65,7 +46,7 @@ struct shared_ptr
     {} 
     
     
-    shared_ptr_counter<T>   _shared_ptr_ctr{nullptr}; 
+    shared_ptr_counter<T>   _shared_ptr_ctr; 
     T* _ptr{nullptr};  
 };
 ```

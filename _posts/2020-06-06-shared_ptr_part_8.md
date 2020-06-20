@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Shared Pointers - Part 7: Multi-threaded locking policies (atomic and mutex based design)"
+title: "Shared Pointers - Part 8: Multi-threaded locking policies (atomic and mutex based design)"
 categories: C++
 keywords: programming; C++
 ---

@@ -5,7 +5,7 @@ categories: C++
 keywords: programming; C++
 ---
 
-The previous post implemented the reference counter as a pointer to an unsigned integer. I don't like this. It is too simplistic. Any features we want to add to the reference counter will have to be done by the shared pointer, even if it is not the job of the shared pointer.  Therefore, let's move the integer reference counter, acquire, and release to a new class.  We will end up with something interesting: we will "delete this".  This is perhaps one of the few cases where we call "delete this".  This is, however, not the reason we are moving the ref counter to a special class. The real reason will be shown in the next tutorial. 
+The previous post implemented the reference counter as a pointer to an unsigned integer. I don't like this. It is too simplistic. Any features we want to add to the reference counter will have to be done by the shared pointer, even if it is not the job of the shared pointer.  Therefore, let's move the integer reference counter, acquire, and release to a new class.  As we do that, we will end up with something interesting: we will "delete this".  
 
 Let's see how our new shared pointer will look like.   
 
@@ -13,7 +13,7 @@ Let's see how our new shared pointer will look like.
 template <class T> 
 struct ref_counter_ptr_t
 { 
-  uint32_t _ref_cntr;    
+  uint64_t _ref_cntr;    
   T* _ptr;    
  
   ref_counter_ptr_t(T* ptr = nullptr) ; 
@@ -21,6 +21,7 @@ struct ref_counter_ptr_t
   void release();    
 };
 ```
+
 
 The constructor is pretty easy to define. 
 
@@ -94,7 +95,7 @@ shared_ptr<T>::shared_ptr(T* ptr)
 } 
 ```
 
-There should be no difference between this definition and the definition we had in the previous post. I am just adding a try-catch block to show that the new may throw. It may throw whether it was for an integer or a ref_counter_ptr_t type.  However, what we should do if it throws is to throw the exception.  The standard shared pointer will also delete the passed pointer. This makes sense since the job of the shared pointer to take ownership of the pointer. If it throws, then it does not exists, and hence we should also release all resources. 
+There should be no difference between this definition and the definition we had in the previous post. I am just adding a try-catch block to show that the new may throw. It may throw whether it was for an integer or a ``ref_counter_ptr_t`` type.  However, what we should do if it throws is to throw the exception.  The standard shared pointer will also delete the passed pointer. This makes sense because the job of the shared pointer is to take ownership of the pointer. If it throws at the constructor, then it does not exists, and hence we should also release all resources. 
 
 Everything else is pretty much the same. 
 

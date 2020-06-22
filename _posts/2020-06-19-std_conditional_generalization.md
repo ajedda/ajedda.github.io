@@ -3,6 +3,7 @@ layout: post
 title: "Generalization of std::conditional"
 categories: C++
 keywords: programming; C++
+comments: true
 ---
 
 In the previous post, we have a seen a code like this: 

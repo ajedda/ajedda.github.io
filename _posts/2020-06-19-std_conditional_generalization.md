@@ -101,7 +101,68 @@ struct get_type<N, T, Others...>
 }; 
 ```
 
-Trying to specialize for the cases ``get_type<N, T1, T2, T3>`` and ``get_type<T, types_list<T1, T2, T3>>`` may lead to some undesired results in some extreme cases. For example, what if T1 is of type ``types_list<>``, while the others are int and double? For this reason, I prefer to have different ``get_type`` classes, or just document very well how ``get_type`` should be used. 
+I don't like this code. I am redefining the ``get_type`` code for the case ``types_list<Args...>`` and ``Args...``. I would have done the same if I wanted a specialized for ``std::tuple<Args...>``. I should have written one implementation, perhaps for the ``Args...`` case. Then, define multiple interfaces that call the same implementation. We want to do something like this: 
 
-There is a lot of interesting tricks we can do by building on top of this. This post is the first of a series that tackles template programming in C++. 
+```cpp
+template <std::size_t N, typename... Others>
+struct get_type<N, types_list<Others...>>
+{
+    using type = typename get_type<N, Others...>::type; 
+}; 
+```
+
+Unfortunately, this will not work. It is ambiguous. Which template specialization should we call? The ambiguity is coming from specializing the ``std::size_t N`` argument. Here is what we should do instead; use a ``detail`` namespace. Actually, *always use a ``detail`` namespace to hide your implementation in template programming*. Here is how: 
+
+```cpp
+// The implementation. 
+namespace detail
+{
+    template <std::size_t N, typename... Args> 
+    struct get_type;
+    
+    template <typename T, typename... Others>
+    struct get_type<0, T, Others...> 
+    {
+        using type = T;    
+    };
+
+    template <std::size_t N, typename T, typename... Others>
+    struct get_type<N, T, Others...>
+    {
+        static_assert(sizeof...(Others) + 1 > N, "Out of range"); 
+        using type = typename get_type<N-1, Others...>::type; 
+    }; 
+}
+
+// The interface
+template <std::size_t N, typename... Args> 
+struct get_type; 
+
+template <std::size_t N, typename... Others>
+struct get_type
+{
+   using type = typename detail::get_type<N, Others...>::type;  
+};
+
+template <std::size_t N, typename... Others>
+struct get_type<N, types_list<Others...>>
+{
+   using type = typename detail::get_type<N, Others...>::type; 
+}; 
+
+template <std::size_t N, typename... Others>
+struct get_type<N, std::tuple<Others...>>
+{
+   using type = typename detail::get_type<N, Others...>::type; 
+}; 
+```
+
+Ok, one last thing. We use sometimes use ``std::conditional_t`` instead of writing ``std::conditional``. That will save us from writing ``type`` as in ``std::conditional<b, T, F>::type``. How can we do this? This is quite simple as well. We just need to create an alias as follows: 
+
+```cpp
+template <std::size_t N, typename... Others> 
+using get_type_t = typename get_type<N, Others...>::type; 
+```
+
+This post was just a simple exercise in template programming. We wanted a generalization of ``std::conditional`` that helps us to get a type in a types list using an index at compile-time. We did not need anything other than variadic template specialization. However, we dealt with few techniques. 1) the use of the ``type`` alias within a struct to get the result, 2) the use of the ``detail`` namespace to hide the interface from the implementation (and we saw how this helped us in solving some ambiguties), and 3) the use of the ``*_t`` alias to access the ``type`` alias.  These techniques are frequently used in the STL type traits. As we get involved in harder exercises, we will note that these techniques (and of course more complex ones) are frequently used. 
 

@@ -1,10 +1,19 @@
 #include <iostream> 
 #include <type_traits>
 
-
+template <typename... Args>
+struct types_list {}; 
 
 template <typename T, typename... Others>
 struct type_exists; 
+
+template <typename T, typename... Others>
+struct type_exists<T, types_list<Others...>>
+{
+  static constexpr bool value = type_exists<T, Others...>::value;   
+}; 
+
+
 
 template <typename T, typename F>
 struct type_exists<T, F>
@@ -40,4 +49,6 @@ int main()
     std::cout << type_exists<int, int, bool>::value; 
     std::cout << type_exists<int, bool, char>::value; 
     std::cout << type_exists<int, bool, char, int>::value;  
+    
+    std::cout << type_exists<int, types_list<int, bool, char, double>>::value;  
 }

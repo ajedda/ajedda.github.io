@@ -38,7 +38,7 @@ print_opt(opt_get<double>(t));
 print_opt(opt_get<float>(t)); 
 ```
 
-This will output 3N. The problem of this post is how to design ``type_exists_v``.  Let's start with the interface. 
+This will output 3N. Believe me, this has some interesting applications. The problem of this post is how to design ``type_exists_v``.  Let's start with the interface. 
 
 ```cpp
 template <typename T, typename... Others>

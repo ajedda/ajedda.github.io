@@ -14,22 +14,13 @@ template <typename T, typename... Others>
 struct type_exists; 
 
 template <typename T, typename F>
-struct type_exists<T, F> : std::false_type {};  
+struct type_exists<T, F> : std::is_same<T, F> {};  
 
-template <typename T>
-struct type_exists<T, T> : std::true_type {}; 
-
-
-template <typename T, typename... Others>
-struct type_exists<T, T, Others...> 
-{
-    static constexpr bool value = true; 
-}; 
 
 template <typename T, typename F, typename... Others>
 struct type_exists<T, F, Others...>
 {
-    static constexpr bool value =  type_exists<T, Others...>::value;  
+    static constexpr bool value =  std::is_same_v<T, F> || type_exists<T, Others...>::value;  
 }; 
 
 }

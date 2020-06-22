@@ -18,12 +18,14 @@ struct MsgB {};
 ```cpp
 struct WorkerA : public WorkerInterface
 {
-    void handle(MsgA const&) override { std::cout << "handle msgA \n"; }  
+    // Note: WorkerA handles MsgA only. 
+    void handle(MsgA const&) override { std::cout << "handle msgA \n"; }
 };
 
-struct WorkerA : public WorkerInterface
+struct WorkerB : public WorkerInterface
 {
-    void handle(MsgB const&) override { std::cout << "handle msgB \n"; }  
+    // Note: WorkerB handles MsgB only. 
+    void handle(MsgB const&) override { std::cout << "handle msgB \n"; }
 };
 ```
 
@@ -37,9 +39,9 @@ struct WorkerInterface
 }; 
 ```
 
-But this does not come freely. First, we should use the instances of WorkerA and WorkerB as references, which can be annoying (you will have to add ```using WorkerInterface::process``` if not). Second, it may be annoying to inherit from the interface with an extra work ranging from adding few lines to creating wrapper classes. Third, some reviewers may just hate that extra indirection for performance reasons (even though this does not have that big of an impact, and can be zero in many cases).
+But this does not come freely. First, we should use the instances of WorkerA and WorkerB as references, which can be annoying (you will have to add ```using WorkerInterface::handle``` if not). Second, it may be annoying to inherit from the interface with an extra work ranging from adding few lines to creating wrapper classes. Third, some reviewers may just hate that extra indirection for performance reasons (even though this does not have that big of an impact, and can be zero in many cases).
 
-The answer to these problems is usually static polymorphisim. How do we implement this nice default handlers in static polymorphisim. The answer is the detection idiom. Concepts will help us even more. Let me walk you through an example. 
+An answer to these problems is static polymorphisim. How do we implement the default handlers in static polymorphisim. The answer is the detection idiom. Concepts will help us even more. Let me walk you through an example. 
 
 Let's create our first concept for MsgA and MsgB classes. 
 
@@ -74,7 +76,7 @@ void SomeClass::upon_recv(AcceptedMsg const& msg)
 }
 ```
 
-Unfortunately, this will not work. AcceptedMsg is either MsgA or MsgB. When upon_recv receives MsgA message, it fail compiling ```b1.handle(msg)``` and ```b2.handle(msg)```. If it received MsgB message, it fails at ```a1.handle(msg)``` and ```a2.handle(msg)```. 
+Unfortunately, this will not work. AcceptedMsg is either ``MsgA`` or ``MsgB``. When ``upon_recv`` receives MsgA message, it fail compiling ```b1.handle(msg)``` and ```b2.handle(msg)```. If it received ``MsgB`` message, it fails at ``a1.handle(msg)`` and ``a2.handle(msg)``. 
 
 We need to create a default behavior like the virtual functions in the first section of this blog. We are looking for something as below: 
 
@@ -94,7 +96,7 @@ void SomeClass::upon_recv(AcceptedMsg const& msg)
 }
 ```
 
-Perfect. This works! Now imagine that you have WorkerC, WorkerD, WorkerE, and others. Some of the handle MsgA messages, some handle MsgB messages, and some handle none, or both. You will end up declaring two functions for each one of the new workers. Fortunately, we don't have to do this with templates. 
+Perfect. This works! Now imagine that you have ``WorkerC``, ``WorkerD``, ``WorkerE``, and others. Some of them handle ``MsgA`` messages, some handle ``MsgB`` messages, and some handle none, or both. You will end up declaring two functions for each one of the new workers. Fortunately, we don't have to do this with templates. 
 
 ```
 template <typename W> 
@@ -107,7 +109,7 @@ void handle(W& w, AcceptedMsg const& msg)
 }
 ```
 
-**How to detect that a class has a function with a given signature?** We use the SFINAE magic. We can use std::experimental::is_detected. 
+**How to detect that a class has a function with a given signature?** We use the SFINAE magic. We can use ``std::experimental::is_detected``. 
 
 ```cpp
 template <typename W, typename M> 
@@ -143,7 +145,7 @@ void handle(W& w, M const& msg)
 }
 ```
 
-The if-constexpr is a C++17 feature. Without this feature, we would use std::enable_if as follows: 
+The if-constexpr is a C++17 feature. Without this feature, we would use ``std::enable_if`` as follows: 
 
 ```cpp
 namespace std {

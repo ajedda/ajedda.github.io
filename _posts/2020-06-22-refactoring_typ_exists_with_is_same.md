@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Refactoring type_exists with std::is_same"
+title: "Rewriting type_exists with std::is_same"
 categories: C++
 keywords: programming; C++
 comments: true

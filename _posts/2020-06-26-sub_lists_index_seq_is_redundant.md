@@ -240,3 +240,71 @@ std::variant<int, double> v; v=10; // Ok.
 ```
 
 What may have more applications is a template (or, function) that removes redundant types from a types list (i.e., convert it to a set). I will have to implement this. The next posts propose techniques and exercises that will take there. 
+
+**Time for some refactoring**.  This post introduced index sequences, and it won't be complete unless we at least show another application that use them. The following refactoring of ``is_all_unique`` will use index sequences and fold expressions. Together, they are quite powerful. We will change the interface of ``detail::is_all_unique``. As a result, we want to move outside the ``detail`` namespace the the special cases of type lists of size 1 or 0. 
+
+
+**Add this:** (outside the ``detail`` namespace)
+```cpp
+// Some special cases: sizeof list 1
+template <template <typename...> typename TypeList, typename Arg>
+struct is_all_unique<TypeList<Arg>> 
+{
+   static constexpr bool value = true;  
+}; 
+
+// Some special cases: sizeof list 0. 
+template <template <typename...> typename TypeList>
+struct is_all_unique<TypeList<>> 
+{
+   static constexpr bool value = true;  
+};
+```
+
+**Remove this** (from the ``detail`` namespace)
+```cpp
+      
+template <typename TypeList> 
+struct is_all_unique<TypeList, 1, 0> 
+{
+    static constexpr bool value = true; 
+};
+    
+
+template <typename TypeList> 
+struct is_all_unique<TypeList, 1, std::size_t(-1)> 
+{
+    static constexpr bool value = true; 
+};
+```
+
+.. or, as a bonus, we can use *concepts* to further reduce the code to: 
+```cpp
+// This handles the case of sizeof...(Args) is 1 or 0. 
+template <template <typename...> typename TypeList, typename... Args> requires (sizeof...(Args) <= 1)
+struct is_all_unique<TypeList<Args...>> 
+{
+   static constexpr bool value = true;  
+}; 
+```
+
+We will change ``detail::is_all_unique``. You will notice there is no base case anymore (or, there is no recursion). Second, we will pass an index sequence instead of ``first`` and ``last``. We will let the fold expression to do its work. 
+
+```cpp
+namespace detail 
+{
+    template <typename TypeList, typename IndexSeq>
+    struct is_all_unique; 
+    
+    template <typename TypeList, 
+              template <std::size_t...> typename IndexSeq, 
+              std::size_t... Ns>
+    struct is_all_unique<TypeList, IndexSeq<Ns...>>
+    {
+        static constexpr bool value = (! type_exists_v< get_type_t<Ns, TypeList>, 
+                                                        sub_list_t<TypeList, typename ::make_index_seq<Ns-1>::type>> && ...); 
+    };
+}
+```
+
+Boom. Magic. It works. 

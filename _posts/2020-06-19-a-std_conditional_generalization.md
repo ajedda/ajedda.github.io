@@ -158,6 +158,13 @@ struct get_type<N, std::tuple<Others...>>
 }; 
 ```
 
+You would do the same if you wanted ``get_type`` to run with ``std::variant``, ``std::pair``, or any similar template type in the same form. Therefore, let's just use this form of ``get_type``. 
+
+```cpp
+template <auto n, template <typename...> typename TypeContainer, typename... Args> 
+struct get_type<n, TypeContainer<Args...>> : get_type_base<n, Args...> {}; 
+```
+
 Ok, one last thing. We use sometimes use ``std::conditional_t`` instead of writing ``std::conditional``. That will save us from writing ``type`` as in ``std::conditional<b, T, F>::type``. How can we do this? This is quite simple as well. We just need to create an alias as follows: 
 
 ```cpp

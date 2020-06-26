@@ -28,10 +28,8 @@ struct get_type : get_type_base<N, Args...>
 { 
 }; 
 
-template <auto  N, typename... Args>
-struct get_type<N, types_list<Args...>> : get_type_base<N, Args...>
-{
-}; 
+template <auto n, template <typename...> typename TypeContainer, typename... Args> 
+struct get_type<n, TypeContainer<Args...>> : get_type_base<n, Args...> {}; 
 ```
 
 First, let's use a common base class ``get_type_base`` to avoid redundant code. You can hide it in the ``detail`` namespace.  As you can see, I am using ``auto N`` instead of ``std::size_t N``.  

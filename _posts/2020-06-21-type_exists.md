@@ -61,6 +61,15 @@ struct type_exists<T, std::tuple<Others...>>
 };
 ```
 
+.. or just have one interface: 
+```cpp
+template <typename T, template <typename...> typename TypeList, typename... Args>
+struct type_exists<T, TypeList<Args...>> : detail::type_exists<T, Args...> 
+{};
+
+ 
+```
+
 We are using a static constexpr boolean variable here instead of a type alias.  We named this boolean variable ``value``. In general, a type trait has a ``value``, a ``type``, or both. Now, let's get into the details. 
 
 ```cpp

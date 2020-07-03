@@ -161,7 +161,7 @@ struct IsPreviouslyOccured
 {
     using current_type = get_type_t<i, TL>; 
     using p_types_sublist = sub_list_t<TL, typename ::make_index_seq<i-1>::type>; 
-    constexpr static bool value = type_exists_v< current_type, p_types_sublist>;
+    constexpr static bool value = has_type_v< current_type, p_types_sublist>;
 
 }; 
 

@@ -152,8 +152,8 @@ using concat_t = typename concat<Indices1, Indices2>::type;
 With all of these tools, we can ask the following question: is there an integer (or any other type ``T``) in the first $m$ types within a tuple (or any other types list)? 
 
 ```cpp
-static_assert(  type_exists_v<short, sub_list_t<  std::tuple<int, double, char, short>, make_index_seq<3>::type >>  );
-static_assert(! type_exists_v<short, sub_list_t<  std::tuple<int, double, char, short>, make_index_seq<2>::type >>  );
+static_assert(  has_type_v<short, sub_list_t<  std::tuple<int, double, char, short>, make_index_seq<3>::type >>  );
+static_assert(! has_type_v<short, sub_list_t<  std::tuple<int, double, char, short>, make_index_seq<2>::type >>  );
 ```
 
 
@@ -173,7 +173,7 @@ namespace detail
         using head_type = get_type_t<last, TypeList>;
         using index_seq_type = typename ::make_index_seq<last-1>::type;
         using sublist_type = sub_list_t<TypeList,  index_seq_type >;     
-        static constexpr bool value = ! type_exists_v<head_type, sublist_type>; 
+        static constexpr bool value = ! has_type_v<head_type, sublist_type>; 
     }; 
     
     // The head type should not exist in the sublist prior to head (i.e. from 0 to first-1). 
@@ -185,7 +185,7 @@ namespace detail
          using index_seq_type = typename ::make_index_seq<first-1>::type;  
          using sublist_type = sub_list_t<TypeList,  index_seq_type >; 
           
-         static constexpr bool value = ! type_exists_v<head_type, sublist_type> && is_all_unique<TypeList, first+1, last>::value;
+         static constexpr bool value = ! has_type_v<head_type, sublist_type> && is_all_unique<TypeList, first+1, last>::value;
     };
     
     // some special cases. 
@@ -301,7 +301,7 @@ namespace detail
               std::size_t... Ns>
     struct is_all_unique<TypeList, IndexSeq<Ns...>>
     {
-        static constexpr bool value = (! type_exists_v< get_type_t<Ns, TypeList>, 
+        static constexpr bool value = (! has_type_v< get_type_t<Ns, TypeList>, 
                                                         sub_list_t<TypeList, typename ::make_index_seq<Ns-1>::type>> && ...); 
     };
 }

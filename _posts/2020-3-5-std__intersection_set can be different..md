@@ -7,9 +7,9 @@ keywords: algorithms
 
 
 
-I think that the STL library algorithms should be as generic as possible. In other words, these algorithms should be the basic blocks of other more sophisticated algorithms. I will talk about std::intersection_set.  My argument is that it is not general enough. To make it more general, however, we may end up with an interface that is hard to use.  
+I think that the STL library algorithms should be as generic as possible. In other words, these algorithms should be the basic blocks of other more sophisticated algorithms. I will talk about ``std::intersection_set``.  My argument is that it is not general enough. I need to do some more work to show that this change is _that_ useful (therefore, I may change this post from time to time).
 
-As understood from its name, std::intersection_set finds the intersection of two ranges. It assumes that the two ranges are sorted. Let's start with an example of how to use std::intersection_set. 
+As understood from its name, ``std::intersection_set`` finds the intersection of two ranges. It assumes that the two ranges are sorted. Let's start with an example of how to use it. 
 
 ```cpp
 std::vector<int> A{1,2,5,7}; 
@@ -26,12 +26,12 @@ std::cout << "C: ";  for (auto c: C) { std::cout << c << ' '; } std::cout << '\n
 
 // This will print:  C: 2 5. 
 ```
-If the ranges are ordered differently (let's say descneding order), then we can simply change the cmp function such as: 
+If the ranges are ordered differently (let's say by descending order), then we can simply change the ``cmp`` function such as: 
 ```cpp
 auto cmp = [](const auto& l, const auto& r) { return l < r; };
 ```
 
-In reality, *cmp* is used in two different ways; *cmp(l,r)* and *cmp(r,l)*. That declaration above worked only because *r* and *l* have the same type.  Let's show this by working on an example where the ranges are of different types. 
+In ``std::intersection``, ``cmp`` is used in two different ways; ``cmp(l,r)`` and ``cmp(r,l)``. That declaration above worked only because ``r`` and ``l`` have the same type.  Let's show this by working on an example where the ranges are of different types. 
 
 ```cpp
 struct S 
@@ -54,7 +54,9 @@ std::set_intersection(std::cbegin(A), std::cend(A),
   
 std::cout << "C: ";  for (auto c: C) { std::cout << c << ' '; } std::cout << '\n'; 
 ```
-This will not work (even if you replace cmp to:  `auto cmp = [](const auto& l, const auto& r) { return l.a < r; };`What you should do instead is to replace *cmp* with a struct as follows: 
+
+This will not work (even if you replace ``cmp`` to:  ``auto cmp = [](const auto& l, const auto& r) { return l.a < r; };``. What you should do instead is to replace ``cmp`` with a struct as follows:
+
 ```cpp
 struct cmp
 {
@@ -63,7 +65,7 @@ struct cmp
 };
 ```
 
-I will show you how std::set_intersection is implemented (one way of doing that of course) to understand what is happening (I will be using operator< instead of cmp here). 
+I will show one implementation of ``std::set_intersection`` to understand what is happening (I will be using ``operator<`` instead of ``cmp`` here). 
 
 ```cpp
 namespace my 
@@ -87,7 +89,7 @@ namespace my
 
 Note that there are `*first1 < *first2`, and then `*first2 < *first1`.  We are dealing with two different operator< functions here.  (*Side note:* We intentionally don't use `*first1 == *first2`. Why? if the data comes from one type, then we will need to define operator< only, instead of operator< and the equality operator.)   
 
-The other thing that I want you to look at is the assignment at the else-statement (i.e., `*out_it++ = *first1++; first2++;`).  I think that this is a weakness in *std::intersection_set*. Why shouldn't we take the *first2 instead? Why don't the standard let us decide which one to use? Maybe we will want to combine *first1 and *first2.   Something like this: 
+The other thing that I want you to look at is the assignment at the else-statement (i.e., `*out_it++ = *first1++; first2++;`).  I think that this is a weakness in ``std::intersection_set``. Why shouldn't we take the ``*first2`` instead? Why don't the standard let us decide which one to use? Maybe we will want to combine ``*first1`` and ``*first2``.   Something like this: 
 
 ```cpp
 namespace my 
@@ -143,5 +145,3 @@ std::cout << "C: ";  for (auto c: C) { std::cout << c << ' '; } std::cout << '\n
 ```
 
 I see some applications for this combinator as in matching. Like you have two sets of S's and M's each with a unique identifier. We would like to match the elements with the same ID in the output. We may also want to run some function on these output pairs.  I am not sure how serious these applications are, so I will just skip them for now. 
-
-(Test changes). 

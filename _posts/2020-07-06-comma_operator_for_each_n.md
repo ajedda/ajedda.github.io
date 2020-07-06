@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Two applications for the comma operator"
+title: "Two applications of the comma operator"
 categories: C++
 keywords: programming; C++
 ---

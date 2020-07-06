@@ -75,7 +75,7 @@ What should we include in blanks knowing that I want to include fold expression?
 ```cpp
    void operator()(F gf, Args&&... args) 
    {
-	  ((gf(std::forward<Args>(args)...)
+	  ((gf(std::forward<Args>(args)...), n),...);
    } 
 ```
 
@@ -84,7 +84,7 @@ For the sake of simplicity, let's ignore the args for a moment as follows:
 ```cpp
    void operator()(F gf, Args&&... args) 
    {
-	  ((gf(std::forward<Args>(args)...)
+	  ((gf(), n),...);
    } 
 ```
 

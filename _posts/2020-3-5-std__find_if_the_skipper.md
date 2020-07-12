@@ -7,7 +7,7 @@ keywords: algorithms
 
 
 
-One of the algorithms/functions that I find myself using a lot is std::find_if.  It is just a linear search in a range. It can be used however in other applications. One possible implementation of this function is as follows: 
+One of the algorithms/functions that I find myself using a lot is `std::find_if`.  It is just a linear search in a range. It can be used however in other applications. One possible implementation of this function is as follows: 
 
 ```cpp
 template <typename Iterator, typename Op> 
@@ -24,7 +24,7 @@ The user will need to test the returned iterator against *last* to check if it e
 ```cpp
 // the classical application of std::find_if is something like this. 
 auto it = std::find_if(std::cbegin(v), std::cend(v), 
-      [] (auto e) { return e % 2; });
+      [] (auto e) { return e % 2 == 1; });
 // This extra check may sound boring, but it just add some power to this std::find_if function (as we will see next..). 
 if (it != std::cend(v)) 
 { 
@@ -32,7 +32,7 @@ if (it != std::cend(v))
 }  
 ```
 
-The std::find_if is just one simple for-loop that we often see when we just want to skip some elements in a given range.  For example, if we want to find the sum of all positive integers in a sorted std::vector<int>, we can do something like this. 
+The `std::find_if` is just one simple for-loop that we often see when we just want to skip some elements in a given range.  For example, if we want to find the sum of all positive integers in a sorted `std::vector<int>`, we can do something like this. 
 
 ```cpp
 int sum = 0; 

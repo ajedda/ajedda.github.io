@@ -3,6 +3,7 @@ layout: post
 title: "Spectral Clustering using simple Linear Algebra concepts"
 categories: algorithms
 keywords: algorithms; Machine Learning
+published: false
 ---
 
 Let's speak about *spectral clustering*. 

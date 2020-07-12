@@ -7,10 +7,10 @@ namespace detail
    
 // Why struct? I don't really like functions when dealing with templates. 
 template <typename IndexSeq, typename F, typename... ArgsT>
-struct repeat; 
+struct for_each_n; 
 
 template <std::size_t... n, typename F, typename... Args> 
-struct repeat<std::index_sequence<n...>, F, Args...>
+struct for_each_n<std::index_sequence<n...>, F, Args...>
 {
    void operator()(F gf, Args&&... args) 
    {
@@ -46,22 +46,22 @@ struct repeat<std::index_sequence<n...>, F, Args...>
 
 
 template <std::size_t n, typename F, typename... Args> 
-void repeat(F gf, Args&&... args) 
+void for_each_n(F gf, Args&&... args) 
 {
-    detail::repeat<std::make_index_sequence<n>, F, Args...>{}(gf, std::forward<Args>(args)...); 
+    detail::for_each_n<std::make_index_sequence<n>, F, Args...>{}(gf, std::forward<Args>(args)...); 
 }
 
 int main() 
 {
     auto f = []() { std::cout << "f"; };
-    repeat<4>(f); 
+    for_each_n<4>(f); 
     std::cout << '\n'; 
     
     auto g = [](char c) { std::cout << "g" << c << std::endl; };
-    repeat<5>(g, 'a');
+    for_each_n<5>(g, 'a');
     
     auto h = [](char c, int n) { std::cout << c << n << ' '; };
-    repeat<2>(h, 'd', 4); 
+    for_each_n<2>(h, 'd', 4); 
     
 
     for (std::size_t i{2}; (i < 5);  std::cout << i, i++) 

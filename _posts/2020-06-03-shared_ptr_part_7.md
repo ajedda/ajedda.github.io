@@ -98,6 +98,9 @@ struct ref_counter_ptr_base
 {
    uint32_t _ref_cntr; // the only member variable here. 
    
+   void acquire(); 
+   void release(); 
+   
    virtual void dispose() = 0; 
    // (compared to: 
    // virtual void dispose(T* ptr) = 0; 
@@ -121,7 +124,28 @@ struct ref_counter_ptr_deleter final : public ref_counter_ptr_base<P>
 } 
 ```
 
+Now, we can write specialization of ``acquire`` and ``release`` according to the lock policy. For example: 
+
+```cpp
+template <LockPolicy P> 
+void ref_counter_ptr_base<P>::acquire() 
+{ 
+  std::cout << "acquire lock policy: general \n"; 
+  ++_ref_cntr;
+} 
+
+template <> 
+void ref_counter_ptr_base<LockPolicy::mutex>::acquire() 
+{ 
+  std::cout << "acquire lock policy: mutex \n"; 
+  // acquire lock (we will see how to do this in the next post)
+  ++_ref_cntr;
+} 
+```
+
 That first method is pretty nice. This is what gcc is doing now. It is not easy to do. It may result in a lot of refactoring. 
+
+
 
 The **second method** use the C++17 feature **if constexpr**. It makes the code much easier. However, not everyone has the luxury of using C++17. With if-constexpr, we will keep the template ``ref_counter_ptr_base`` as a function of ``T`` and ``LockPolicy``. The implementation of ``acquire`` will look like this: 
 
@@ -129,15 +153,15 @@ The **second method** use the C++17 feature **if constexpr**. It makes the code 
 template <typename T, LockPolicy> 
 void ref_counter_ptr_base<T, P>::acquire() 
 { 
-	if constexpr (P == LockPolicy::atomic) 
-	{
-		acquire_atomic(...); 
-	} 
-	else if constexpr (P == LockPolicy::atomic) 
-	{
-		acquire_mutex(...);
-	} 
-	else { acquire_single(...); }
+  if constexpr (P == LockPolicy::atomic) 
+  {
+    acquire_atomic(...); 
+  } 
+  else if constexpr (P == LockPolicy::atomic) 
+  {
+    acquire_mutex(...);
+  } 
+  else { acquire_single(...); }
 } 
 ```
 

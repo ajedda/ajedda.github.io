@@ -3,12 +3,11 @@ layout: post
 title: "Spectral Clustering: the optimization problem"
 categories: algorithms
 keywords: algorithms; Machine Learning
-published: false
 ---
 
 Let's speak about *spectral clustering*, or the optimization problem of spectral clustering.  
 
-We have a graph $G=(V,E)$.  The edge linking any two nodes $v_i$ and $v_j$ has a non-negative weight $w_{ij}$ that reprsents the *similiarity* between the two nodes. A $w_{ij} = 0$ means that $v_i$ and $v_j$ are infinitley disimiliar. 
+We have a graph $G=(V,E)$.  The edge linking any two nodes $v_i$ and $v_j$ has a non-negative weight $w_{ij}$ that represents the *similarity* between the two nodes. A $w_{ij} = 0$ means that $v_i$ and $v_j$ are infinitely disimiliar. 
 
 We want to cluster the nodes of the graph into $m$ clusters.  We will say that $v_i$ is in $m^{th}$ cluster if $x_i = c_m$ for some constant $c_m$. The vector, therefore, $\mathbf{x}$ is a representation of our clusters. 
 

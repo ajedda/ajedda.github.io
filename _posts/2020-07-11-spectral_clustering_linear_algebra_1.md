@@ -3,6 +3,7 @@ layout: post
 title: "Spectral Clustering: the optimization problem"
 categories: algorithms
 keywords: algorithms; Machine Learning
+published: false
 ---
 
 Let's speak about *spectral clustering*, or the optimization problem of spectral clustering.  
@@ -78,9 +79,9 @@ Note, we are still talking about the problem of clustering the nodes of $G$ into
 We used the Laplacian of the graph $G$.  We could have used other known matrixes as well. For example, we can use the *normalized Laplacian* defined as: $$\mathbf{L}_{sym} = \mathbf{D}^{-1/2} \mathbf{L} \mathbf{D}^{-1/2}$$.   You will note that $\mathbf{x}^T\mathbf{L_{sym}}\mathbf{x}$ is equal to $\frac{1}{2} \sum_{ij} w_{ij}(\frac{x_i}{\sqrt{d_i}} - \frac{x_j}{\sqrt{d_j}})^2$.  
 
 
-This optimization problem was treated by different research communities. Ulrike von Luxburg has an interesting tutorial on this topic. The literature, however, may confuse you. Some researchers do not use the weight or similarity between the edges, but instead the distance between them. This can be defined as $1/w_{ij}$. This will change the optimization problem to a maximization instead of minimization. Will it still work? Yes, it will and that's because of the eigenvector properties of the Laplacian. 
+This optimization problem was treated by different research communities. Ulrike von Luxburg has an interesting tutorial on this topic. This was just a simple explanation of spectral clustering. I find some tutorials asking you to imagine the eigenvectors of the graph $G$. This is just too much to ask for.  I hope you liked this post. 
 
-This was just a simple explanation of spectral clustering. I find some tutorials asking you to imagine the eigenvectors of the graph $G$. This is just too much to ask for.  I hope you liked this post. I will try to prepare a toy example with python code soon. 
+I will try to prepare a toy example with python code soon. 
 
 
 

@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "Spectral Clustering: how it works in practice?"
+title: "Spectral Clustering: why it works in practice?"
 categories: algorithms
 keywords: algorithms; Machine Learning
 ---

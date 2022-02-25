@@ -59,7 +59,7 @@ struct get_type<N, types_list<Args...>> : get_type_base<N, Args...>
 
 
 
-enum class Type { Integer = 0, Float, Double}; 
+
 
 
 int main()
@@ -72,6 +72,7 @@ int main()
     static_assert(std::is_same_v<get_type<0, int>::type, int>); 
     static_assert(std::is_same_v<get_type<0, int, double>::type, int>);
     
+	enum class Type { Integer = 0, Float, Double}; 
     static_assert(std::is_same_v<get_type<Type::Integer, int, double>::type, int>);
     
     

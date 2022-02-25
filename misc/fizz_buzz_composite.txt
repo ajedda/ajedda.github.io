@@ -1,0 +1,34 @@
+function fizzbuzz(n) {
+  
+	let test = (d, s, x_func) => n%d == 0 ?  _ => s  + x_func('') :  x_func
+    let fizz = x_func => test(3, 'Fizz', x_func)
+    let buzz = x_func => test(5, 'Buzz', x_func) 
+    
+    return fizz(buzz(x=>x))(n.toString())
+}
+
+/*
+The case of n=15. 
+buzz(x=>x) : this will call test(d:5, s:'Buzz', x_func:x=>x)
+n%d==0: so returns a function _ => s:'Buzz' + x_func(''). The output depends on what x_func is. 
+In this specific case, x_func is the identity function .. so the returned value is 'Buzz'. 
+
+.. but it is not always the same case. 
+What happens if we call fizz(_ => 'Buzz')? This will call: test(d:3, s:'Fizz', x_func: _=>'Buzz').
+Because n%d==0: we will return a new functoin _ => 'Fizz' + x_func('') (or, _ => 'Fizz' + 'Buzz').
+Note. We are just returning a function here. We will evaluate this function with n. So: FizzBuzz is the 
+result. 
+
+
+What if n is dividable by 5 or 3? 
+1. For the case buzz(x=>x): n%d != 0 (for d=5) .. so return x_func as it is (the identity function in this case). 
+2. Similiarly, fizz(x=>x): n%d != 0 (for d=3).. so return x_func as it is (i.e, x=>x). 
+This will be evaluated with n.toString() -> the result is n.toString(). 
+
+What if n is divisible by d=3? 
+fizz(x=>x): n%d==0: return a new function _ : 'Fizz' + x_func('') or: _ : 'Fizz' .. 
+This is evaluated with n.toString() .. and hence return 'Fizz' no matter what n is. 
+*/ 
+
+console.log(fizzbuzz(15));
+

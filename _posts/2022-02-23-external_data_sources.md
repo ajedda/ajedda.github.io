@@ -36,7 +36,7 @@ SystemMessage DataReader::read()
 Let's talk about `convert_data`. This process is sometimes called _data normalization_. This will change every time the format of the external data changes (that is, the _contract_ changes). As a developer:  
 
 - **P1**. You should only change `convert_data` if the contract changes. 
-- **P2**. You should design `convert_data` such that changing it takes the minimum amount of efforts.
+- **P2**. You should design `convert_data` such that changing it takes the minimum amount of effort.
 
 Here are some examples: 
 
@@ -44,13 +44,7 @@ Here are some examples:
 2. Your external data source is an accounting transaction file of JSON format. The amount field now is a combination of 2 fields instead of one. 
 
 
-
-
-Let's talk about `read_raw_data`. The implemenation of this function depends on the external system. It may read from a database, socket, or files of different formats. As a developer: 
-
-- **P3**. You should decouple the implementation details of external systems from your logic. In other words, use `dependency injection`. 
-
-I will have to re-write my code above therefore. 
+There is another important principle, call it **P3** here. Any change on `convert_data` should not be dependent on `read_raw_data`.  As an example, assume that you have a task to change `convert_data` for some reason. Meanwhile, the external system you get your raw data from, which will call TheSource, is down. You standup in your daily team meeting and say: "Hey, I am blocked. I can't work on JIRA-XYZ because TheSource is down". This shows that there, with high probability, a flaw in the architecture. You usually achieve this through dependency injection. The code below will show the idea better. 
 
 ```cpp
 SystemMessage DataReader::read() 

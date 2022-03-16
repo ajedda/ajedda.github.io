@@ -95,7 +95,7 @@ def gen_actions_trades(prices):
                       ]
         """
         The way to read this: 
-        When in state (p=0, t), you can have two actions; a1) but, a2) do nothing. 
+        When in state (p=0, t), you can have two actions; a1) buy, a2) do nothing. 
         Each action has a reward and leads to another state. In the case of a1 (buy), 
             the reward is zero because we haven't sold anything. 
             the next state is (prices[t], t+1), because portfolio has a stock with value set to prices[t] (or, current price) and t+1 

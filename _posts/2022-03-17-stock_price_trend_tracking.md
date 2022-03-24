@@ -6,7 +6,7 @@ keywords: programming; Python; Algorithms
 ---
 
  
-The psychic trading algorithm I introduced in the previous post has a cute application.it can serves as a trend tracking algorithm for stock prices. What does that mean? 
+The psychic trading algorithm I introduced in the previous post has a cute application. It can serve as a trend tracking algorithm for stock prices. What does that mean? 
 
 When studying a stock price time series, we may want to split that time series into a set of connected trend lines. It is not an easy problem. Common algorithms for this problem usually require human intervention in different phases of the algorithm execution. I am not claiming I am proposing a solution. I just want to share a nice observation; an application of the psychic trading algorithm for drawing trend lines. Let's have a look at some examples of what I mean here. 
 

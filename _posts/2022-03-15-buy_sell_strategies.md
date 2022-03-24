@@ -144,31 +144,12 @@ optimal_A = backtrack_actions(A, (0,0))   # How would you write this?
 ```
 
 
-Many brokers still charge you for each trade you make. How can you include the trading cost in the algorithm above? We just need to change the `_get_actions` function as follows: 
-
-```python 
-    def _get_actions(p,t):
-        if p == 0: 
-            actions = [(-1 * trade_cost, (prices[t], t+1)),   # buy: 
-                       (0,               (0, t+1)),           # do nothing.
-                      ]
-
-        else: 
-            actions = [((prices[t]-p) - trade_cost, (0, t+1)),  # sell
-                       (0,                          (p, t+1)),  # hold.
-                      ]
-            
-        return actions 
 
 
-```
+**Why all of that?** For two reasons: 
 
-Do you want extra constraints? Ok. We started with the assumption that we have no stocks in the portfolio, but enough cash to buy the stock at any price. In reality, we would have an initial cash budget. How would you change the algorithm above to add this constraint? 
-
-
-Why all of that? For two reasons: 
 1. The idea of caching/memorization. Caching is a technique widely used, especially when teaching *dynamic programming*. Many students (and experienced software developers) wrongfully think that caching used with recursive functions  _is_ dynamic programming. I will explain how this is not true in future posts. This implementation of caching is not taught in undergraduate dynamic programming classes. Instead, we usually estimate the size of the caching graph and fill it in as we run the algorithm. Here, we are constructing the graph on the fly. Nothing new here. It is just that the method I use in this post is more generalizable. 
 
-2. The idea of _actions_ and _rewards_. The reward in the algorithm above was the profit made in cash. The actions were either buy, sell, or do nothing. The terms are very suitable for this specific problem. However, these are common terms in _reinforcment learning_. Dynamic programming is also an approach used in reinforcement learning. I feel that teaching dynamic programming as it is taught in a reinforcement learning class is much more beneficial to the students compared to the method followed in algorithms classes based on Cormen et al.'s classical Introduction to Algorithms class. I am hoping to talk about dynamic programming using these terms in the next posts. My idea: graph algorithms are what should be thought of first. Most algorithms (including dynamic programming algorithms) are nothing but derivatives of graph algorithms. Yet, graph algorithms are taught very late in algorithms classes, and graphs are taught as *data structures* more than *relations*. No need to think about this now. My following posts should be around this topic. 
+2. The idea of _actions_ and _rewards_. The reward in the algorithm above was the profit made in cash. The actions were either buy, sell, or do nothing. The terms are very suitable for this specific problem. However, these are common terms in _reinforcment learning_. Dynamic programming is also an approach used in reinforcement learning. I feel that teaching dynamic programming as it is taught in a reinforcement learning class is much more beneficial to the students compared to the method followed in algorithms classes based on Cormen et al.'s classical Introduction to Algorithms book. I am hoping to talk about dynamic programming using these terms in the next posts. My idea: graph algorithms are what should be thought of first. Most algorithms (including dynamic programming algorithms) are nothing but derivatives of graph algorithms. Yet, graph algorithms are taught very late in algorithms classes, and graphs are taught as *data structures* more than *relations*. No need to think about this now. My following posts should be around this topic. 
 
-3. I forgot to mention a third reason for this post. It has a cool application; stock prices trend following. Next post (I hope). 
+3. I forgot to mention a third reason for this post. It has a cool application; _stock prices trend tracking_. Next post (I hope). 

@@ -6,7 +6,7 @@ keywords: algorithms
 ---
 
 
-![enter image description here](https://miro.medium.com/max/4400/1*ONrJdGmOClFIa-Jdlr5UjA.jpeg)
+![..](/assets/images/merge_roads.jpeg)
 
 You have probably learned about **MergeSort** in your first algorithms/data structure course. It is the first go-to example when explaining recursion, divide-and-conquer algorithms, or achieving the sorting lower bound O(n logn). 
 

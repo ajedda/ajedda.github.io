@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "An unconvential way to calculate Fibonacci numbers"
+title: "An unconventional way to calculate Fibonacci numbers"
 categories: algorithms
 keywords: algorithms; 
 ---
 
-You probably have seen many ways to calculate Fibonacci numbers. Instructors use this problem to explain various concepts (e.g., how a recursion can explore exponentially, dynamic programming bottom-up or top-down approaches, caching, matrix multiplication, and others). I will introduce one rather unconvential way to solve this problem. Whatever I am introducing here is to help understanding dynamic programming. The solution is general-purpose and I wouldn't recommend it for a well-understood problem such as Fibonacci numbers. 
+You probably have seen many ways to calculate Fibonacci numbers. Instructors use this problem to explain various concepts (e.g., how recursion can explore exponentially, dynamic programming bottom-up or top-down approaches, caching, matrix multiplication, and others). I will introduce one rather unconventional way to solve this problem. Whatever I am introducing here is to help understand dynamic programming. The solution is general-purpose and I wouldn't recommend it for a well-understood problem such as Fibonacci numbers. 
 
-I recall I was asked long time ago to solve the Fibonacci number problem in an interview. My solution was quite typical. Start from $i = 0$. Calculate `Fib(i)` until $i = n$. You should always keep track of `Fib(i-1)` and `Fib(i-2)`.  I told the interviewer that I used dynamic programming for that. His reply was quite interesting. "They call this dynamic programming?". Until now, I wish I knew whether he meant that "this is not dynamic programming", or "hmm.. I don't know what dynamic programming is". He was a smart guy. I think he meant the former. If this was the case, then I totally agree with him because *Caching is not dynamic programming*.  
+I recall I was asked a long time ago to solve the Fibonacci number problem in an interview. My solution was quite typical. Start from $i = 0$. Calculate `Fib(i)` until $i = n$. You should always keep track of `Fib(i-1)` and `Fib(i-2)`.  I told the interviewer that I used dynamic programming for that. His reply was quite interesting. "They call this dynamic programming?". Until now, I wish I knew whether he meant that "this is not dynamic programming", or "hmm.. I don't know what dynamic programming is". He was a smart guy. I think he meant the former. If this was the case, then I agree with him because *Caching is not dynamic programming*.  
 
 Let's write `Fib(n)` for $n = 4$ as a system of equations. 
 
@@ -56,7 +56,7 @@ def fib_v1(n):
     return V[n]
 ```
 
-It is very cool that it will actually converge (Hint: `V[i]` won't change once it reaches the correct value). It is cooler that it will converge even if we don't use `prev_V`. Instead, we can update `V` on the fly. It will converge faster in most cases. See the code below. 
+It is very cool that it will converge (Hint: `V[i]` won't change once it reaches the correct value). It is cooler that it will converge even if we don't use `prev_V`. Instead, we can update `V` on the fly. It will converge faster in most cases. See the code below. 
 
 ```python
 def fib_v2(n): 
@@ -80,5 +80,5 @@ def fib_v2(n):
 
 You will notice that the ordering at which we evaluate the equations has an impact on the speed of convergence. The best ordering is when indices are set to `[0, 1, ..., n]`. It will take only two iterations in this case; the correct solution is reached in the first iteration whereas the second iteration is used to check that `V` does not change.  Yes, that ordering of indices is what we use in the bottom-up dynamic programming approach we all know about (or, what I have used in the interview). 
 
-So why this unconvential method? because dynamic programming is used to solve more complex problems. For example. Let's assume that we formulate problem $P$ with a system of equations as above. However, we noticed that there are cycles such that $f(i)$ depends on $f(j)$ and $f(j)$ depends on $f(i)$. The approach used in `fib_v1` and `fib_v2` would help.  The *shortest path problem* is an example where we find these scenarios. More details in the next posts. I hope I show you there how important the shortest path problem is.
+So why this unconventional method? because dynamic programming is used to solve more complex problems. For example. Let's assume that we formulate problem $P$ with a system of equations as above. However, we noticed that there are cycles such that $f(i)$ depends on $f(j)$ and $f(j)$ depends on $f(i)$. The approach used in `fib_v1` and `fib_v2` would help.  The *shortest path problem* is an example of where we find these scenarios. More details in the next posts. I hope I show you there how important the shortest path problem is.
 

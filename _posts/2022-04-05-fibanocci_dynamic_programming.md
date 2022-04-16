@@ -33,7 +33,7 @@ In order to evaluate $f(i)$, we should have already calculated $f(i-1)$ and $f(i
 \end{alignat*}
 </div>
 
-Then, we set `V(i)` to $f(i)$. Obviously this won't lead to the right solution. In the first iteration, $f(i)$ is only correct for the base cases $f(1)$ and $f(0)$.  But now we have new values in `V`.  If we repeat the same previous steps with the new `V`, we will start getting more correct values (e.g., $f(i) = 1$ and `V` have more correct values). Repeating these steps will eventually lead to the correct solution (i.e., $f(i)$ is correct for all $i$ and `V[i]` is equal to $f(i)$).  *When should we stop?*, when `V` does not change anymore.  
+Then, we set `V(i)` to $f(i)$. Obviously this won't lead to the right solution. In the first iteration, $f(i)$ is only correct for the base cases $f(1)$ and $f(0)$.  But now we have new values in `V`.  If we repeat the same previous steps with the new `V`, we will start getting more correct values (e.g., $f(i)$ and `V` have more correct values). Repeating these steps will eventually lead to the correct solution (i.e., $f(i)$ is correct for all $i$ and `V[i]` is equal to $f(i)$).  *When should we stop?*, when `V` does not change anymore.  
 
 
 ```python
@@ -80,5 +80,5 @@ def fib_v2(n):
 
 You will notice that the ordering at which we evaluate the equations has an impact on the speed of convergence. The best ordering is when indices are set to `[0, 1, ..., n]`. It will take only two iterations in this case; the correct solution is reached in the first iteration whereas the second iteration is used to check that `V` does not change.  Yes, that ordering of indices is what we use in the bottom-up dynamic programming approach we all know about (or, what I have used in the interview). 
 
-So why this unconventional method? because dynamic programming is used to solve more complex problems. For example. Let's assume that we formulate problem $P$ with a system of equations as above. However, we noticed that there are cycles such that $f(i)$ depends on $f(j)$ and $f(j)$ depends on $f(i)$. The approach used in `fib_v1` and `fib_v2` would help.  The *shortest path problem* is an example of where we find these scenarios. More details in the next posts. I hope I show you there how important the shortest path problem is.
+**So why this unconventional method?** Because this is the essence of dynamic programming. Every dynamic programming algorithm is a variation of this algorithm. It could be a specialization that we were able to achieve because of additional knowledge about the problem.  This generalized method allows us to solve more complex problems.  For example. Let's assume that we formulate problem $P$ with a system of equations as above. However, we noticed that there are cycles such that $f(i)$ depends on $f(j)$ and $f(j)$ depends on $f(i)$. The approach used in `fib_v1` and `fib_v2` would help.  The *shortest path problem* is an example of where we find these scenarios. More details in the next posts. I hope I show you there how important the shortest path problem is.
 

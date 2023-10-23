@@ -91,7 +91,7 @@ Let's come with final questions and answers:
 2. **Is this a new algorithm?** 
     - No it is not. This is often called Bellman-Form algorithm, which is taught in undergraduate algorithms courses. The way of writing the code is different and the reason of that is to magnify the use of DP here. Many versions iterates $n$ times.
 
-3. **Can we convergence faster?** 
+3. **Can we converge faster?** 
     - Yes. This is the whole idea of many other shortest path algorithms. It all depends on the order of evaluating the DP equations. Recall how generating Fibanocci $F(n)$ was much faster when evaluating from $0$ to $n$ compared to $n$ to 0.  The same idea applies in these algorithms: 
         - Dijkstra: always pick the node closest to the target. 
         - You can pick the nodes in a random order. 

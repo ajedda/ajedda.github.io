@@ -96,7 +96,7 @@ Let's come with final questions and answers:
         - Dijkstra: always pick the node closest to the target. 
         - You can pick the nodes in a random order. 
         - You can assign an order for the nodes, evaluating in this order at even iterations, and in the opposite order in the odd iterations. 
-            - Note: these algorithms may sound as random heuristics I came out with. They are not. These are published papers. 
+            - *Note*: these algorithms may sound as random heuristics I came out with. They are not. These ideas are published papers. 
         - We have special algorithms if the underlying graph is non-arbitrary (for example, DAG or a tree).  
 	- *Note*: shortest path in DAG is a very interesting example. It falls in a family of DP algorithms such as 0-1 Knapsack, Longest common sequence, and many others. I will have to write a post about it. 
 
